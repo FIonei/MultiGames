@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomCard">
+        <attr name="card_name" format="string"/>
+        <attr name="android:src"/>
+        <attr name="cardCornerRadius"/>
+        <attr name="android:textSize"/>
+    </declare-styleable>
+</resources>

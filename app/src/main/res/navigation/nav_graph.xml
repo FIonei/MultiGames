@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.fionei.multigames.main.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_seaBattleFragment"
+            app:destination="@id/seaBattleFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_tarotFragment"
+            app:destination="@id/tarotFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_linesFragment"
+            app:destination="@id/linesFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_doubleMemoryFragment"
+            app:destination="@id/doubleMemoryFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_memoryFragment"
+            app:destination="@id/memoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/doubleMemoryFragment"
+        android:name="com.fionei.multigames.double_memory.DoubleMemoryFragment"
+        android:label="fragment_double_memory"
+        tools:layout="@layout/fragment_double_memory" />
+    <fragment
+        android:id="@+id/linesFragment"
+        android:name="com.fionei.multigames.lines.LinesFragment"
+        android:label="fragment_lines"
+        tools:layout="@layout/fragment_lines" />
+    <fragment
+        android:id="@+id/memoryFragment"
+        android:name="com.fionei.multigames.memory.MemoryFragment"
+        android:label="fragment_memory"
+        tools:layout="@layout/fragment_memory" />
+    <fragment
+        android:id="@+id/seaBattleFragment"
+        android:name="com.fionei.multigames.seabattle.SeaBattleFragment"
+        android:label="fragment_sea_battle"
+        tools:layout="@layout/fragment_sea_battle" />
+    <fragment
+        android:id="@+id/tarotFragment"
+        android:name="com.fionei.multigames.tarot.TarotFragment"
+        android:label="fragment_tarot"
+        tools:layout="@layout/fragment_tarot" />
+</navigation>
