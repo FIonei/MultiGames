@@ -1,32 +1,43 @@
 package com.fionei.multigames.memory
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.fionei.multigames.R
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.fionei.multigames.databinding.FragmentMemoryBinding
+import java.lang.Integer.min
 
-class MemoryFragment : Fragment() {
+class MemoryFragment(/*private val tableSize: Int, private val isAlwaysVisible: Boolean*/) : Fragment() {
+    private lateinit var memoryBinding: FragmentMemoryBinding
+    private val viewModel: MemoryViewModel by viewModels()
 
-    companion object {
-        fun newInstance() = MemoryFragment()
-    }
-
-    private lateinit var viewModel: MemoryViewModel
+    //temporary
+    private val tableSize = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_memory, container, false)
+    ): View {
+        memoryBinding = FragmentMemoryBinding.inflate(inflater, container, false)
+        memoryBinding.root.post {
+            val size: Int = min(memoryBinding.root.measuredHeight, memoryBinding.root.measuredWidth)
+            memoryBinding.mainTable.layoutParams.height = size
+            memoryBinding.mainTable.layoutParams.width = size
+        }
+        viewModel.generateNewTable(tableSize)
+        memoryBinding.mainTable.apply {
+
+        }
+        return memoryBinding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MemoryViewModel::class.java)
-        // TODO: Use the ViewModel
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.massiveOfNumbers.observe(viewLifecycleOwner) {
+
+        }
     }
 
 }

@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".memory.MemoryFragment">
+    app:layout_constraintDimensionRatio="1:1">
 
-    <com.fionei.multigames.tools.CustomTextTable
-        android:id="@+id/main_table"
+    <TextView
+        android:id="@+id/text_cell"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_margin="20dp"
-        app:layout_constraintDimensionRatio="1:1"
-        app:size="4" />
+        android:focusable="false"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:text="1" />
 
 </FrameLayout>

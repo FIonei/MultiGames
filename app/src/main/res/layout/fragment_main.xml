@@ -10,7 +10,7 @@
         android:id="@+id/memory_card"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/test_fire"
+        android:src="@drawable/memory"
         android:textSize="15sp"
         app:cardCornerRadius="20dp"
         app:card_name="memory game"
