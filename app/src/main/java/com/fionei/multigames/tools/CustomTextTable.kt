@@ -56,43 +56,45 @@ class CustomTextTable(context: Context, attrs: AttributeSet) : LinearLayout(cont
             tableSize = newSize
             val density = Resources.getSystem().displayMetrics.density
 
+
+            binding.apply {
+                root.removeAllViews()
+                listOfCells.clear()
+                for (line in 0 until tableSize) {//add columns
+                    val lineView = LinearLayout(context)
+                    for (column in 0 until tableSize) {
+                        val cell = TableItemTextBinding.inflate(LayoutInflater.from(context))
+                        listOfCells.add(cell)
+                        lineView.addView(cell.root)
+                    }
+                    root.addView(lineView)
+                }
+                setTextInTable(values)
+            }
+
             binding.root.post {
                 val totalTableSize = min(binding.root.measuredWidth, binding.root.measuredHeight)
                 val cellSize = kotlin.math.floor(totalTableSize.toDouble() / tableSize).toInt()
                 layoutParams.width = cellSize * tableSize + 4 * density.toInt()
                 layoutParams.height = cellSize * tableSize + 4 * density.toInt()
-                binding.apply {
-                    root.removeAllViews()
-                    listOfCells.clear()
-                    for (line in 0 until tableSize) {//add columns
-                        val lineView = LinearLayout(context)
-                        for (column in 0 until tableSize) {
-                            val cell = TableItemTextBinding.inflate(LayoutInflater.from(context))
-                            cell.root.layoutParams = FrameLayout.LayoutParams(cellSize, cellSize)
-                            listOfCells.add(cell)
-                            lineView.addView(cell.root)
-                            cell.root.setOnClickListener {
-                                onCorrectClick(line, column)
-                            }
-                        }
-                        root.addView(lineView)
-                    }
-                    setTextInTable(values)
-                    root.requestLayout()
+                for (cell in listOfCells) {
+                    cell.root.layoutParams = LayoutParams(cellSize, cellSize)
+                    cell.root.requestLayout()
                 }
             }
         }
     }
 
-    fun setTable(newValues: List<Any>) {
+    private fun setTable(newValues: List<Any>) {
+        clearAllCells()
         setTextInTable(newValues)
         binding.root.requestLayout()
     }
 
-    fun setTextInCell(text: String, line: Int, column: Int) {
+    fun setCellClickListener(line: Int, column: Int, onClick: OnClickListener) {
         val cellPosition = line * tableSize + column
         if (cellPosition >= listOfCells.size) return
-        listOfCells[cellPosition].textCell.text = text
+        listOfCells[cellPosition].root.setOnClickListener(onClick)
     }
 
     private fun setTextInTable(list: List<Any>) {
@@ -106,27 +108,38 @@ class CustomTextTable(context: Context, attrs: AttributeSet) : LinearLayout(cont
         }
     }
 
-    /**@param line is started with 0
-     * @param column is started with 0
-     **/
-    fun onCorrectClick(line: Int, column: Int) {
-        listOfCells[line * tableSize + column].apply {
+    fun setOnCellClick(position: Int, isCorrect: Boolean, onClick: OnClickListener?) {
+        listOfCells[position].root.setOnClickListener {
+            if (isCorrect) {
+                onCorrectClick(position)
+            } else {
+                onIncorrectClick(position)
+            }
+            onClick?.onClick(it)
+        }
+    }
+
+    private fun onCorrectClick(position: Int) {
+        listOfCells[position].apply {
             this.root.isClickable = false
             this.textCell.setBackgroundColor(context.getColor(R.color.green))
         }
     }
 
-    /**@param line is started with 0
-     * @param column is started with 0
-     **/
-    fun onIncorrectClick(line: Int, column: Int) {
-        listOfCells[line * tableSize + column].apply {
+    private fun onIncorrectClick(position: Int) {
+        listOfCells[position].apply {
             this.root.isClickable = false
-            this.root.setBackgroundColor(Color.RED)
+            this.textCell.setBackgroundColor(Color.RED)
             postDelayed({
                 this.root.isClickable = true
-                this.root.setBackgroundColor(0)
-            }, 1000)
+                this.textCell.setBackgroundColor(0)
+            }, 500)
+        }
+    }
+    private fun clearAllCells() {
+        for (cell in listOfCells) {
+            cell.root.isClickable = true
+            cell.textCell.setBackgroundColor(0)
         }
     }
 }
