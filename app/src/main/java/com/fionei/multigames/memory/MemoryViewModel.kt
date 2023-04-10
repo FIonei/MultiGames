@@ -10,13 +10,11 @@ class MemoryViewModel : ViewModel() {
     val massiveOfNumbers: LiveData<List<Int>>
         get() = _massiveOfNumbers
 
-    //generate size^2 random numbers in 1..size^2
     fun generateNewTable(size: Int) {
         val totalSize = size*size
-        _massiveOfNumbers.value = (0..totalSize).shuffled().take(totalSize)
+        _massiveOfNumbers.value = (1.. totalSize).shuffled().take(totalSize)
     }
 
-    //generate size^2 random numbers in min..max
     fun generateNewTable(size: Int, min: Int, _max: Int) {
         val totalSize = size*size
         val max =

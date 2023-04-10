@@ -8,6 +8,6 @@
     </declare-styleable>
 
     <declare-styleable name="CustomTextTable">
-        <attr name="size" format="integer"/>
+        <attr name="tableSize" format="integer"/>
     </declare-styleable>
 </resources>

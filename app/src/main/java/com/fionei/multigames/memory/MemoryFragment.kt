@@ -9,12 +9,13 @@ import androidx.fragment.app.viewModels
 import com.fionei.multigames.databinding.FragmentMemoryBinding
 import java.lang.Integer.min
 
-class MemoryFragment(/*private val tableSize: Int, private val isAlwaysVisible: Boolean*/) : Fragment() {
+class MemoryFragment(/*private val tableSize: Int, private val isAlwaysVisible: Boolean*/) :
+    Fragment() {
     private lateinit var memoryBinding: FragmentMemoryBinding
     private val viewModel: MemoryViewModel by viewModels()
 
     //temporary
-    private val tableSize = 1
+    private val tableSize = 5
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,18 +26,16 @@ class MemoryFragment(/*private val tableSize: Int, private val isAlwaysVisible: 
             val size: Int = min(memoryBinding.root.measuredHeight, memoryBinding.root.measuredWidth)
             memoryBinding.mainTable.layoutParams.height = size
             memoryBinding.mainTable.layoutParams.width = size
+            memoryBinding.root.requestLayout()
         }
         viewModel.generateNewTable(tableSize)
-        memoryBinding.mainTable.apply {
-
-        }
         return memoryBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.massiveOfNumbers.observe(viewLifecycleOwner) {
-
+            memoryBinding.mainTable.setTable(tableSize, it)
         }
     }
 
