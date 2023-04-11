@@ -1,9 +1,6 @@
 package com.fionei.multigames.memory
 
-import android.app.AlertDialog
 import android.content.Context.MODE_PRIVATE
-import android.content.DialogInterface
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,13 +12,12 @@ import com.fionei.multigames.databinding.FragmentMemoryBinding
 import com.fionei.multigames.tools.*
 import java.lang.Integer.min
 
-class MemoryFragment(/*private val tableSize: Int, private val isAlwaysVisible: Boolean*/) :
-    Fragment() {
+class MemoryFragment : Fragment() {
     private lateinit var memoryBinding: FragmentMemoryBinding
     private val viewModel: MemoryViewModel by viewModels()
 
     //temporary
-    private val tableSize = 3
+    private val tableSize = 5 //TODO: get this from settings
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +30,7 @@ class MemoryFragment(/*private val tableSize: Int, private val isAlwaysVisible: 
             memoryBinding.mainTable.layoutParams.width = size
             memoryBinding.root.requestLayout()
         }
+        //TODO: add ability to change min/max values from settings
         viewModel.generateNewTable(tableSize)
         return memoryBinding.root
     }
@@ -62,32 +59,43 @@ class MemoryFragment(/*private val tableSize: Int, private val isAlwaysVisible: 
                 }
             }
         }
+        viewModel.timerTime.observe(viewLifecycleOwner) {
+            memoryBinding.timer.text = it.toTimerTime
+        }
     }
 
     private fun startWin() {
-        stopTimer()
-        openDialog(maxTime - 1)
+        viewModel.stopTimer()
+        openDialog(viewModel.timerTime.value ?: -10)
     }
 
-    private fun stopTimer() {
-
+    override fun onResume() {
+        super.onResume()
+        viewModel.startTimer()
     }
 
-    private fun openDialog(time: Int) {
+    override fun onPause() {
+        super.onPause()
+        viewModel.stopTimer()
+    }
+
+    private fun openDialog(time: Long) {
+        if (time < 0) {
+            //TODO: show dialog to user with error text
+            throw Exception("something went wrong with timer")
+        }
         val normalTime: String = time.toNormalTime
         val preferences = requireContext().getSharedPreferences(RECORDS, MODE_PRIVATE)
-        with(preferences.edit()) {
-            putInt(MEMORY_RECORD_KEY, maxTime)
-            apply()
-        }
-        val recordTime: Int = preferences.getInt(MEMORY_RECORD_KEY, maxTime)
+        val memoryKey = MEMORY_RECORD_KEY + '_' + tableSize
+        val recordTime: Long = preferences.getLong(memoryKey, maxTime)
         val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        //TODO: add translations
         dialog.apply {
             setTitle("Congratulations!!")
             val text = "You won $tableSize x $tableSize table in $normalTime.\n"
             val subText = if (time < recordTime) {
                 with(preferences.edit()) {
-                    putInt(MEMORY_RECORD_KEY, time)
+                    putLong(memoryKey, time)
                     apply()
                 }
                 "Now your personal best is $normalTime"
@@ -95,16 +103,15 @@ class MemoryFragment(/*private val tableSize: Int, private val isAlwaysVisible: 
                 "Your personal best is still ${recordTime.toNormalTime}"
             }
             setMessage(text + subText)
-            setPositiveButton("Play again") { dialog, which ->
+            setPositiveButton("Play again") { dialog, _ ->
                 dialog.dismiss()
                 viewModel.generateNewTable(tableSize)
             }
-            setNegativeButton("Back to menu") { dialog, which ->
+            setNegativeButton("Back to menu") { dialog, _ ->
                 dialog.dismiss()
                 findNavController().popBackStack()
             }
         }
         dialog.show()
     }
-
 }
